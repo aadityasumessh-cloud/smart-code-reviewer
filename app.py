@@ -1,21 +1,29 @@
 import streamlit as st
 
-# Page config
-st.set_page_config(page_title="Smart Code Reviewer", page_icon="💻", layout="centered")
+# Page setup
+st.set_page_config(page_title="Smart Code Reviewer", page_icon="💻")
 
 # Title
 st.title("💻 Smart Code Reviewer")
-st.markdown("Analyze your code for **time complexity**, issues, and improvements.")
+st.write("Analyze your code for time complexity and performance issues.")
 
-# Input box
-code = st.text_area("📌 Paste your code below:", height=200)
+# File upload
+uploaded_file = st.file_uploader("📂 Upload your code file", type=["txt", "py", "cpp", "java"])
+
+# OR manual input
+code = st.text_area("📌 Or paste your code here:", height=200)
+
+# If file uploaded → override code
+if uploaded_file is not None:
+    code = uploaded_file.read().decode("utf-8")
 
 # Button
 if st.button("🚀 Analyze Code"):
 
     if code.strip() == "":
-        st.warning("⚠ Please paste some code first.")
+        st.warning("⚠ Please provide code (upload or paste).")
     else:
+        # Count loops
         loops = code.lower().count("for") + code.lower().count("while")
 
         # Complexity logic
@@ -24,11 +32,11 @@ if st.button("🚀 Analyze Code"):
         elif loops == 1:
             complexity = "O(n)"
         elif loops == 2:
-            complexity = "O(n²)"
+            complexity = "O(n^2)"
         else:
             complexity = f"O(n^{loops})"
 
-        # Results section
+        # Show results
         st.markdown("---")
         st.subheader("📊 Analysis Result")
 
@@ -48,7 +56,7 @@ if st.button("🚀 Analyze Code"):
         if loops >= 2:
             st.info("Try optimizing using better data structures (e.g., HashMap, Sets)")
         else:
-            st.info("Code is efficient. Keep it up!")
+            st.info("Your code is efficient. Good job!")
 
         # Extra checks
         if "def" in code:
